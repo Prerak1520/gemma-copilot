@@ -1,0 +1,29 @@
+.DS_Store
+*.log
+
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+dashboard/node_modules/
+
+# Build output
+dashboard/.next/
+dashboard/out/
+dist/
+coverage/
+
+# Local app data
+data/wiki-snapshot/
+data/*.db
+data/*.db-*
+skills/.candidates/
+
+# Generated submission/demo artifacts
+resumes/generated/
+*.pdf
+*.mp4
+*.mov

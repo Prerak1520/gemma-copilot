@@ -1,0 +1,21 @@
+{
+  "name": "gemma-copilot",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node --no-warnings=ExperimentalWarning api/server.mjs",
+    "init-wiki": "node --no-warnings=ExperimentalWarning scripts/init-wiki.mjs",
+    "reflect": "node --no-warnings=ExperimentalWarning scripts/reflect.mjs",
+    "reflect:apply": "node --no-warnings=ExperimentalWarning scripts/reflect.mjs jd-analysis 10 --apply",
+    "test": "node --no-warnings=ExperimentalWarning --test",
+    "dashboard": "npm --prefix dashboard run dev",
+    "dashboard:install": "npm --prefix dashboard install"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "cors": "^2.8.5",
+    "puppeteer": "^22.0.0",
+    "marked": "^12.0.0"
+  }
+}

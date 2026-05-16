@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Gemma Copilot",
+  "version": "0.1.0",
+  "description": "Private, on-device career copilot powered by Gemma 4.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": [
+    "http://localhost/*",
+    "http://127.0.0.1/*",
+    "https://www.linkedin.com/*",
+    "https://*.greenhouse.io/*",
+    "https://boards.greenhouse.io/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Gemma Copilot"
+  },
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/jobs/*"],
+      "js": ["content/linkedin.js"]
+    },
+    {
+      "matches": ["https://*.greenhouse.io/*", "https://boards.greenhouse.io/*"],
+      "js": ["content/greenhouse.js"]
+    }
+  ]
+}
