@@ -1,10 +1,22 @@
 # Gemma Copilot
 
-A **private, self-improving career copilot** that runs on-device using **Gemma 4** + **Ollama**. It analyzes job descriptions from the browser, compares them against a personal career wiki, learns from feedback, and can generate tailored resume drafts with PDF export.
+Gemma Copilot is a **private, local-first career copilot** for people trying to job hunt in a brutal market without burning money, time, or privacy on every application.
+
+It uses **Gemma 4 through Ollama** to analyze job descriptions, compare them against a local career wiki, learn from feedback, and generate tailored resume drafts with PDF export. The idea is simple: if every serious application needs the latest, strongest, ATS-aware version of your resume, that workflow should be fast, repeatable, and affordable.
 
 Built for the Gemma 4 Challenge. Inspired by the [Hermes Agent](https://hermes-agent.nousresearch.com/docs/) concepts of episodic memory and skill self-improvement.
 
-## What it does
+## Why I Built This
+
+I built Gemma Copilot because I am also trying to find a job in this market.
+
+Every application asks for the same painful loop: read the posting, decode what the company really wants, compare it with your experience, rewrite the resume, tune the keywords for ATS, and still make the result sound like you. Doing that manually means endless copy-paste. Doing it with cloud agents can get expensive quickly, especially when you are using long job descriptions, career notes, resumes, and multiple revisions. That token budget is also the budget I want to use for building things.
+
+The Gemma 4 Challenge made the product click for me. Local LLMs no longer feel like a compromise for this kind of work. A small local model can handle fast job-description analysis, and a larger local model can handle deeper reflection and resume tailoring. That means a job seeker can get a practical assistant without sending private career history to a cloud service and without paying per-token for every attempt.
+
+Gemma Copilot is my answer to that problem: a local agent that helps you search smarter, spend less, and keep improving from every run.
+
+## What It Does
 
 - **Chrome extension:** scrape LinkedIn, Greenhouse, or selected page text and analyze the JD in one click.
 - **Private JD scoring:** return ATS score, fit summary, matches, skill gaps, red flags, deal-breakers, salary signals, and recommendation.
@@ -15,28 +27,34 @@ Built for the Gemma 4 Challenge. Inspired by the [Hermes Agent](https://hermes-a
 - **Resume tailoring:** generate tailored resume markdown from multiple templates and export it as PDF.
 - **Validation:** model output is schema-checked; malformed output is saved as a clear `partial_failure`, not treated as success.
 
-## Why these models
+## Why Gemma 4
+
+The app uses local Gemma models for different parts of the workflow:
 
 | Layer | Model | Why |
 |---|---|---|
-| Browser-edge JD analysis | **Gemma 4 4B (E4B)** | Sub-second inference, runs locally so JDs and personal career data never leave the device. Perfect for the "click extension → instant verdict" UX. |
-| Reflection + interview coaching | **Gemma 4 26B MoE** | Sparse Mixture-of-Experts: only ~3.8B active params per token, so a deep model fits on a single workstation. Needed for rewriting prompts and scoring STAR answers — tasks where reasoning depth matters more than latency. |
+| Browser-edge JD analysis | **Gemma 4 4B (E4B)** | Fast local inference for the "click extension, get verdict" workflow. Job descriptions and personal career data stay on the device. |
+| Reflection + interview coaching | **Gemma 4 26B MoE** | Deeper reasoning for prompt improvement, resume tailoring, and STAR answer coaching, where latency matters less than quality. |
 | Optional screenshot fallback | vision-capable local Ollama model | If `SCREENSHOT_MODEL` is configured, the API can try extracting job text from a captured browser screenshot when DOM scraping is thin. |
 
-Currently configured with `gemma4:e2b` as a stand-in for E4B (swap via `EDGE_MODEL` env var once `gemma4:e4b` is pulled).
+The project is currently configured with `gemma4:e2b` as a stand-in for E4B. Swap it through `EDGE_MODEL` once `gemma4:e4b` is available locally.
 
-## What's novel: the self-improvement loop
+## Self-Improvement Loop
+
+Gemma Copilot is not just a stateless resume bot. It keeps a local record of what happened and can propose better skill prompts from feedback.
 
 1. Every `/analyze` run logs `{input, output, skill_version}` to SQLite.
 2. The user gives useful/off feedback with optional notes in the popup.
-3. `npm run reflect` feeds recent runs + feedback to the 26B model and asks it to rewrite the skill prompt.
+3. `npm run reflect` feeds recent runs and feedback to the 26B model and asks it to rewrite the skill prompt.
 4. The new prompt is saved as a candidate under `skills/.candidates/`.
 5. After review, `npm run reflect:apply` promotes it to `skills/jd-analysis.v(n+1).md`.
-6. The reflection rationale is stored, so you can read *why* the agent changed its approach.
+6. The reflection rationale is stored, so you can read why the agent changed its approach.
 
-## Memory (Hermes-style episodic)
+## Local Memory
 
-Your `career-wiki/` (profile, strengths, STAR stories, deal-breakers) is copied once into `data/wiki-snapshot/`, chunked, and indexed into a SQLite **FTS5** virtual table. On every analysis, the most relevant chunks are retrieved (BM25) and injected into the prompt — so the model "remembers" who you are.
+Your `career-wiki/` contains your profile, strengths, STAR stories, deal-breakers, target roles, and other job-search context. `npm run init-wiki` copies it into `data/wiki-snapshot/`, chunks it, and indexes it into a SQLite **FTS5** virtual table.
+
+On every analysis, Gemma Copilot retrieves the most relevant chunks with BM25 and injects them into the prompt. That gives the model useful memory without sending your personal career history to an external service.
 
 ## Setup
 
@@ -62,20 +80,20 @@ npm start                    # http://localhost:3939
 npm run dashboard             # http://localhost:3940
 
 # 7. Load the extension
-#    Chrome → chrome://extensions → Developer mode → Load unpacked → select ./extension
+#    Chrome -> chrome://extensions -> Developer mode -> Load unpacked -> select ./extension
 ```
 
 ## Use
 
 1. Open any LinkedIn job page (`linkedin.com/jobs/...`) or Greenhouse posting.
-2. Click the Gemma Copilot icon → **Analyze this JD**.
-3. See ATS score, red flags, skills gap, and which memory chunks were cited.
+2. Click the Gemma Copilot icon and choose **Analyze this JD**.
+3. Review ATS score, fit summary, red flags, skills gap, and cited memory chunks.
 4. If LinkedIn extraction is thin, open the details panel or select the JD text before retrying.
-5. Click useful/off and add an optional note for reflection.
+5. Mark the result useful/off and add an optional note for reflection.
 6. Generate a tailored resume from a template and download the PDF.
-7. After ~5+ runs, `npm run reflect` to create a candidate skill update; use `npm run reflect:apply` after review.
+7. After several runs, use `npm run reflect` to create a candidate skill update; use `npm run reflect:apply` after review.
 
-## API surface
+## API Surface
 
 - `GET /health`
 - `POST /analyze`
@@ -94,7 +112,7 @@ npm run dashboard             # http://localhost:3940
 - `GET /resume/:id`
 - `GET /resume/:id/pdf`
 
-## Quality checks
+## Quality Checks
 
 ```bash
 npm test
@@ -103,19 +121,19 @@ node --check api/app.mjs
 node --check extension/popup.js
 ```
 
-## Competition demo path
+## Competition Demo Path
 
-1. Start API + dashboard.
+1. Start API and dashboard.
 2. Open a LinkedIn or Greenhouse job.
 3. Analyze the JD from the extension.
 4. Show the run in the dashboard, including memory chunks and validation status.
 5. Add feedback, run reflection to create a candidate skill prompt, and show the diff.
 6. Generate a tailored resume from `base-ai-pm`, preview it, and export PDF.
 
-## File map
+## File Map
 
 See [INDEX.md](INDEX.md).
 
 ## Cost
 
-**$0.** All inference is local via Ollama. SQLite file. No cloud services.
+**$0 for inference.** All model calls run locally through Ollama. Data lives in SQLite. No cloud LLM API is required.

@@ -23,6 +23,7 @@ data/*.db-*
 skills/.candidates/
 
 # Generated submission/demo artifacts
+SUBMISSION_CHECKLIST.md
 resumes/generated/
 *.pdf
 *.mp4
