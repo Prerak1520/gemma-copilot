@@ -42,11 +42,6 @@ The Gemma 4 Challenge made me look at the problem differently. Local models are 
 
 That is the product bet behind Gemma Copilot: local models can make job search more private, more affordable, and more repeatable.
 
-## Demo
-
-Demo link: `[add video or demo URL here]`
-
-Repo: `[add GitHub repo URL here]`
 
 ## Screenshots
 
