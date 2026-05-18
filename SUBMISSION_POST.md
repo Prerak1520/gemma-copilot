@@ -48,6 +48,28 @@ Demo link: `[add video or demo URL here]`
 
 Repo: `[add GitHub repo URL here]`
 
+## Screenshots
+
+![Gemma Copilot Chrome extension showing a local Gemma analysis result with an ATS score, fit summary, skill gaps, feedback controls, and resume generation.](docs/demo-assets/extension-analysis-result.png)
+
+Gemma Copilot analyzes a job description directly from the browser and returns an ATS-aware verdict without sending career context to a cloud LLM.
+
+![Gemma Copilot dashboard showing the skill prompt comparison view for the job-description analysis workflow.](docs/demo-assets/skill-diff.png)
+
+The dashboard keeps prompt versions reviewable so feedback-driven reflection can be inspected before any skill update is promoted.
+
+![Gemma Copilot dashboard controls for selecting a job, choosing a resume template, and generating a tailored resume.](docs/demo-assets/resume-generator-controls.png)
+
+Resume generation is part of the same local workflow, turning a scored job into a tailored draft.
+
+![Terminal output showing the Gemma Copilot API running locally with edge and deep Gemma models configured.](docs/demo-assets/api-local-runtime.png)
+
+The API runs locally on port 3939 and uses Ollama-hosted Gemma models for inference.
+
+![Terminal output showing the Gemma Copilot dashboard running locally on localhost port 3940.](docs/demo-assets/dashboard-local-runtime.png)
+
+The Next.js dashboard runs locally and proxies API requests to the local Express server.
+
 Suggested walkthrough:
 
 1. Start the API and dashboard.
